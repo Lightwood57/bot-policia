@@ -32,25 +32,24 @@ async function makePoliceWelcomeImage({ avatarUrl, username, memberCount, guildN
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext("2d");
 
-  // ===== Fundo Azul Escuro =====
+  // Fundo
   ctx.fillStyle = "#0a1a2f";
   ctx.fillRect(0, 0, width, height);
 
-  // ===== Faixa Vermelha (giroflex) =====
+  // Faixa giroflex
   ctx.fillStyle = "#b30000";
-  ctx.fillRect(0, 0, width, 60);
-
+  ctx.fillRect(0, 0, width, 52);
   ctx.fillStyle = "#1e90ff";
-  ctx.fillRect(0, 60, width, 5);
+  ctx.fillRect(0, 52, width, 4);
 
-  // ===== Caixa principal =====
-  ctx.fillStyle = "rgba(255,255,255,0.05)";
-  ctx.fillRect(30, 85, width - 60, 170);
+  // Card
+  ctx.fillStyle = "rgba(255,255,255,0.06)";
+  ctx.fillRect(20, 78, width - 40, 182);
 
-  // ===== Avatar circular =====
-  const avatarSize = 160;
-  const avatarX = 40;
-  const avatarY = 105;
+  // Avatar
+  const avatarSize = 130;
+  const avatarX = 45;
+  const avatarY = 110;
 
   try {
     const avatar = await loadImage(avatarUrl);
@@ -70,35 +69,45 @@ async function makePoliceWelcomeImage({ avatarUrl, username, memberCount, guildN
     ctx.restore();
 
     ctx.strokeStyle = "#1e90ff";
-    ctx.lineWidth = 6;
+    ctx.lineWidth = 5;
     ctx.beginPath();
     ctx.arc(
       avatarX + avatarSize / 2,
       avatarY + avatarSize / 2,
-      avatarSize / 2 + 3,
+      avatarSize / 2 + 2,
       0,
       Math.PI * 2
     );
     ctx.stroke();
-  } catch {}
+  } catch (e) {
+    // sem travar
+  }
 
-  // ===== Textos =====
+  // Texto com sombra (pra nunca sumir)
+  const textX = 210;
+
+  ctx.shadowColor = "rgba(0,0,0,0.6)";
+  ctx.shadowBlur = 6;
+  ctx.shadowOffsetX = 2;
+  ctx.shadowOffsetY = 2;
+
   ctx.fillStyle = "#ffffff";
   ctx.font = "bold 30px Arial";
-  ctx.fillText("BEM-VINDO(A) À CORPORAÇÃO", 230, 135);
+  ctx.fillText("BEM-VINDO(A) À CORPORAÇÃO", textX, 140);
 
-  ctx.fillStyle = "#1e90ff";
+  ctx.fillStyle = "#4db2ff";
   ctx.font = "bold 28px Arial";
-  ctx.fillText(limitText(username.toUpperCase(), 20), 230, 175);
+  ctx.fillText(limitText(username.toUpperCase(), 20), textX, 178);
 
-  ctx.fillStyle = "#ffffff";
+  ctx.fillStyle = "rgba(255,255,255,0.92)";
   ctx.font = "22px Arial";
-  ctx.fillText(`Servidor: ${limitText(guildName, 28)}`, 230, 210);
+  ctx.fillText(`Servidor: ${limitText(guildName, 28)}`, textX, 214);
 
-  ctx.fillStyle = "#cccccc";
+  ctx.fillStyle = "rgba(255,255,255,0.80)";
   ctx.font = "20px Arial";
-  ctx.fillText(`Recruta nº ${memberCount}`, 230, 240);
+  ctx.fillText(`Recruta nº ${memberCount}`, textX, 242);
 
+  // IMPORTANTÍSSIMO
   return canvas.toBuffer("image/png");
 }
 
@@ -115,6 +124,7 @@ client.on("guildMemberAdd", async (member) => {
       console.log("Erro ao dar cargo.");
     }
   }
+
     // ===== DM =====
   try {
     const rulesText = rulesChannelId ? `<#${rulesChannelId}>` : "o canal de regras";
@@ -157,7 +167,7 @@ client.on("guildMemberAdd", async (member) => {
 });
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
-  if (!message.guild) return;
+
   if (message.content === "!testarboasvindas") {
 
     const avatarUrl = message.author.displayAvatarURL({ extension: "png", size: 256 });
