@@ -19,7 +19,7 @@ const client = new Client({
   partials: [Partials.Channel],
 });
 client.once("clientReady", () => {
-  console.log(`🚔 Bot da Polícia online como ${client.user.tag}`);
+  console.log(`🚔 Bot online (RAILWAY OK) como ${client.user.tag}`);
 });
 
 function limitText(text, max) {
