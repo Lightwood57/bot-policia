@@ -152,18 +152,7 @@ client.on("guildMemberAdd", async (member) => {
   });
 
   const attachment = new AttachmentBuilder(imageBuffer, { name: "policia.png" });
-
-  const embed = new EmbedBuilder()
-    .setColor("#1e90ff")
-    .setTitle("🚨 NOVO RECRUTA")
-    .setDescription(
-      `O recruta ${member} acaba de ingressar na corporação.\n` +
-      `📊 Total de membros: **${memberCount}**`
-    )
-    .setImage("attachment://policia.png")
-    .setFooter({ text: "Polícia Militar • Servir e Proteger" });
-
-  await channel.send({ embeds: [embed], files: [attachment] });
+  await channel.send({ files: [attachment] });
 });
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
