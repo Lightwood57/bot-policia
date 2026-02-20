@@ -27,8 +27,8 @@ function limitText(text, max) {
 }
 
 async function makePoliceWelcomeImage({ avatarUrl, username, memberCount, guildName }) {
-  const width = 1000;
-  const height = 350;
+  const width = 900;
+  const height = 280;
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext("2d");
 
@@ -45,12 +45,12 @@ async function makePoliceWelcomeImage({ avatarUrl, username, memberCount, guildN
 
   // ===== Caixa principal =====
   ctx.fillStyle = "rgba(255,255,255,0.05)";
-  ctx.fillRect(40, 100, width - 80, 200);
+  ctx.fillRect(30, 85, width - 60, 170);
 
   // ===== Avatar circular =====
-  const avatarSize = 180;
-  const avatarX = 80;
-  const avatarY = 130;
+  const avatarSize = 160;
+  const avatarX = 40;
+  const avatarY = 105;
 
   try {
     const avatar = await loadImage(avatarUrl);
@@ -84,22 +84,20 @@ async function makePoliceWelcomeImage({ avatarUrl, username, memberCount, guildN
 
   // ===== Textos =====
   ctx.fillStyle = "#ffffff";
-  ctx.font = "bold 30px Arial";
-  ctx.fillText("BEM-VINDO(A) À CORPORAÇÃO", 320, 160);
+ctx.font = "bold 30px Arial";
+ctx.fillText("BEM-VINDO(A) À CORPORAÇÃO", 230, 135);
 
-  ctx.fillStyle = "#1e90ff";
-  ctx.font = "bold 38px Arial";
-  ctx.fillText(limitText(username.toUpperCase(), 20), 320, 210);
+ctx.fillStyle = "#1e90ff";
+ctx.font = "bold 28px Arial";
+ctx.fillText(limitText(username.toUpperCase(), 20), 230, 175);
 
-  ctx.fillStyle = "#ffffff";
-  ctx.font = "28px Arial";
-  ctx.fillText(`Servidor: ${limitText(guildName, 25)}`, 320, 250);
+ctx.fillStyle = "#ffffff";
+ctx.font = "22px Arial";
+ctx.fillText(`Servidor: ${limitText(guildName, 28)}`, 230, 210);
 
-  ctx.fillStyle = "#cccccc";
-  ctx.font = "24px Arial";
-  ctx.fillText(`Recruta nº ${memberCount}`, 320, 290);
-
-  return canvas.toBuffer("image/png");
+ctx.fillStyle = "#cccccc";
+ctx.font = "20px Arial";
+ctx.fillText(`Recruta nº ${memberCount}`, 230, 240);
 }
 
 client.on("guildMemberAdd", async (member) => {
