@@ -84,20 +84,22 @@ async function makePoliceWelcomeImage({ avatarUrl, username, memberCount, guildN
 
   // ===== Textos =====
   ctx.fillStyle = "#ffffff";
-ctx.font = "bold 30px Arial";
-ctx.fillText("BEM-VINDO(A) À CORPORAÇÃO", 230, 135);
+  ctx.font = "bold 30px Arial";
+  ctx.fillText("BEM-VINDO(A) À CORPORAÇÃO", 230, 135);
 
-ctx.fillStyle = "#1e90ff";
-ctx.font = "bold 28px Arial";
-ctx.fillText(limitText(username.toUpperCase(), 20), 230, 175);
+  ctx.fillStyle = "#1e90ff";
+  ctx.font = "bold 28px Arial";
+  ctx.fillText(limitText(username.toUpperCase(), 20), 230, 175);
 
-ctx.fillStyle = "#ffffff";
-ctx.font = "22px Arial";
-ctx.fillText(`Servidor: ${limitText(guildName, 28)}`, 230, 210);
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "22px Arial";
+  ctx.fillText(`Servidor: ${limitText(guildName, 28)}`, 230, 210);
 
-ctx.fillStyle = "#cccccc";
-ctx.font = "20px Arial";
-ctx.fillText(`Recruta nº ${memberCount}`, 230, 240);
+  ctx.fillStyle = "#cccccc";
+  ctx.font = "20px Arial";
+  ctx.fillText(`Recruta nº ${memberCount}`, 230, 240);
+
+  return canvas.toBuffer("image/png");
 }
 
 client.on("guildMemberAdd", async (member) => {
@@ -113,17 +115,18 @@ client.on("guildMemberAdd", async (member) => {
       console.log("Erro ao dar cargo.");
     }
   }
-
-  // ===== DM =====
+    // ===== DM =====
   try {
+    const rulesText = rulesChannelId ? `<#${rulesChannelId}>` : "o canal de regras";
     await member.send(
       `🚔 **ALISTAMENTO CONFIRMADO**\n\n` +
-      `Recruta ${member.user.username}, seja bem-vindo(a) a ${member.guild.name}.\n` +
-      `📜 Leia as regras em <#${rulesChannelId}>.\n\n` +
+      `Recruta **${member.user.username}**, seja bem-vindo(a) ao **${member.guild.name}**.\n` +
+      `📜 Leia ${rulesText}.\n\n` +
       `Boa sorte em sua jornada!`
     );
-  } catch {}
-
+  } catch (e) {
+    console.log(`⚠️ DM falhou para ${member.user.tag}: ${e?.message ?? e}`);
+  }
   // ===== Canal =====
   const channel = member.guild.channels.cache.get(welcomeChannelId);
   if (!channel) return;
@@ -154,7 +157,7 @@ client.on("guildMemberAdd", async (member) => {
 });
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
-
+  if (!message.guild) return;
   if (message.content === "!testarboasvindas") {
 
     const avatarUrl = message.author.displayAvatarURL({ extension: "png", size: 256 });
