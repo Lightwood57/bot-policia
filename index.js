@@ -152,7 +152,10 @@ client.on("guildMemberAdd", async (member) => {
   });
 
   const attachment = new AttachmentBuilder(imageBuffer, { name: "policia.png" });
-  await channel.send({ files: [attachment] });
+  await channel.send({
+  content: `👮‍♂️ Bem-vindo(a) à corporação, ${member}!`,
+  files: [attachment],
+});
 });
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
