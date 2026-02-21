@@ -105,19 +105,19 @@ async function makePoliceWelcomeImage({
   ctx.shadowOffsetY = 2;
 
   ctx.fillStyle = "#ffffff";
-  ctx.font = "bold 30px Arial";
+  ctx.font = "bold 30px DejaVu Sans";
   ctx.fillText("BEM-VINDO(A) À CORPORAÇÃO", textX, 140);
 
   ctx.fillStyle = "#4db2ff";
-  ctx.font = "bold 28px Arial";
+  ctx.font = "bold 28px DejaVu Sans";
   ctx.fillText(limitText(username.toUpperCase(), 20), textX, 178);
 
   ctx.fillStyle = "rgba(255,255,255,0.92)";
-  ctx.font = "22px Arial";
+  ctx.font = "22px DejaVu Sans";
   ctx.fillText(`Servidor: ${limitText(guildName, 28)}`, textX, 214);
 
   ctx.fillStyle = "rgba(255,255,255,0.80)";
-  ctx.font = "20px Arial";
+  ctx.font = "20px DejaVu Sans";
   ctx.fillText(`Recruta nº ${memberCount}`, textX, 242);
 
   return canvas.toBuffer("image/png");
@@ -171,6 +171,7 @@ client.on("guildMemberAdd", async (member) => {
     content: `👮‍♂️ Bem-vindo(a) à corporação, ${member}!`,
     files: [attachment],
   });
+
 });
 
 client.on("messageCreate", async (message) => {

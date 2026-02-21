@@ -1,7 +1,7 @@
 FROM node:22-bookworm-slim
 
 # Dependência necessária para @napi-rs/canvas em alguns ambientes
-RUN apt-get update && apt-get install -y --no-install-recommends libatomic1 \
+RUN apt-get update && apt-get install -y --no-install-recommends libatomic1 fonts-dejavu-core \
   && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
