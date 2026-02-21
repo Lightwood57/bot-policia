@@ -1,4 +1,11 @@
 require("dotenv").config();
+
+const express = require("express");
+const app = express();
+app.get("/", (req, res) => res.send("OK"));
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log("HTTP OK na porta", port));
+
 const {
   Client,
   GatewayIntentBits,
@@ -12,12 +19,13 @@ const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMembers,
-    GatewayIntentBits.GuildMessages,      // ADICIONE
-    GatewayIntentBits.MessageContent,     // ADICIONE
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
     GatewayIntentBits.DirectMessages,
   ],
   partials: [Partials.Channel],
 });
+
 client.once("clientReady", () => {
   console.log(`🚔 Bot online (RAILWAY OK) como ${client.user.tag}`);
 });
@@ -26,7 +34,12 @@ function limitText(text, max) {
   return text.length > max ? text.slice(0, max - 1) + "…" : text;
 }
 
-async function makePoliceWelcomeImage({ avatarUrl, username, memberCount, guildName }) {
+async function makePoliceWelcomeImage({
+  avatarUrl,
+  username,
+  memberCount,
+  guildName,
+}) {
   const width = 900;
   const height = 280;
   const canvas = createCanvas(width, height);
@@ -79,7 +92,7 @@ async function makePoliceWelcomeImage({ avatarUrl, username, memberCount, guildN
       Math.PI * 2
     );
     ctx.stroke();
-  } catch (e) {
+  } catch {
     // sem travar
   }
 
@@ -107,7 +120,6 @@ async function makePoliceWelcomeImage({ avatarUrl, username, memberCount, guildN
   ctx.font = "20px Arial";
   ctx.fillText(`Recruta nº ${memberCount}`, textX, 242);
 
-  // IMPORTANTÍSSIMO
   return canvas.toBuffer("image/png");
 }
 
@@ -116,7 +128,7 @@ client.on("guildMemberAdd", async (member) => {
   const autoRoleId = process.env.AUTO_ROLE_ID;
   const rulesChannelId = process.env.RULES_CHANNEL_ID;
 
-  // ===== Cargo automático =====
+  // Cargo automático
   if (autoRoleId) {
     try {
       await member.roles.add(autoRoleId);
@@ -125,19 +137,20 @@ client.on("guildMemberAdd", async (member) => {
     }
   }
 
-    // ===== DM =====
+  // DM
   try {
     const rulesText = rulesChannelId ? `<#${rulesChannelId}>` : "o canal de regras";
     await member.send(
       `🚔 **ALISTAMENTO CONFIRMADO**\n\n` +
-      `Recruta **${member.user.username}**, seja bem-vindo(a) ao **${member.guild.name}**.\n` +
-      `📜 Leia ${rulesText}.\n\n` +
-      `Boa sorte em sua jornada!`
+        `Recruta **${member.user.username}**, seja bem-vindo(a) ao **${member.guild.name}**.\n` +
+        `📜 Leia ${rulesText}.\n\n` +
+        `Boa sorte em sua jornada!`
     );
   } catch (e) {
     console.log(`⚠️ DM falhou para ${member.user.tag}: ${e?.message ?? e}`);
   }
-  // ===== Canal =====
+
+  // Canal
   const channel = member.guild.channels.cache.get(welcomeChannelId);
   if (!channel) return;
 
@@ -152,16 +165,19 @@ client.on("guildMemberAdd", async (member) => {
   });
 
   const attachment = new AttachmentBuilder(imageBuffer, { name: "policia.png" });
+
+  // Texto + imagem (pra sempre aparecer)
   await channel.send({
-  content: `👮‍♂️ Bem-vindo(a) à corporação, ${member}!`,
-  files: [attachment],
+    content: `👮‍♂️ Bem-vindo(a) à corporação, ${member}!`,
+    files: [attachment],
+  });
 });
-});
+
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
+  if (!message.guild) return; // evita crash em DM
 
   if (message.content === "!testarboasvindas") {
-
     const avatarUrl = message.author.displayAvatarURL({ extension: "png", size: 256 });
     const memberCount = message.guild.memberCount;
 
@@ -178,8 +194,7 @@ client.on("messageCreate", async (message) => {
       .setColor("#1e90ff")
       .setTitle("🚨 TESTE DE BOAS-VINDAS")
       .setDescription(
-        `Simulação para ${message.author}\n` +
-        `📊 Total de membros: **${memberCount}**`
+        `Simulação para ${message.author}\n` + `📊 Total de membros: **${memberCount}**`
       )
       .setImage("attachment://policia.png")
       .setFooter({ text: "Sistema de Boas-Vindas • Polícia Militar" });
@@ -187,4 +202,5 @@ client.on("messageCreate", async (message) => {
     await message.channel.send({ embeds: [embed], files: [attachment] });
   }
 });
+
 client.login(process.env.DISCORD_TOKEN);
